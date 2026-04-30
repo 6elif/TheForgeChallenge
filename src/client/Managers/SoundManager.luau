@@ -1,6 +1,6 @@
 local SoundManager = {}
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local SoundsFolder = ReplicatedStorage:WaitForChild("Sounds")
+local SoundsFolder = ReplicatedStorage.Assets.Sounds
 
 SoundManager.Settings = {
 	Master = 1,

@@ -1,8 +1,8 @@
 local Players = game:GetService("Players")
 
-local dataHandler = require(game:GetService("ServerScriptService").Data.DataHandler)
+local dataHandler = require(game:GetService("ServerScriptService").Server.Unsorted___.Data.DataHandler)
 
-local luckNum = script:WaitForChild("Luck")
+local luckNum = game:GetService("ServerScriptService"):WaitForChild("Luck")
 
 local function changeLuck(player, newLuck)
 	dataHandler.playerProfiles[player].Luck	= newLuck

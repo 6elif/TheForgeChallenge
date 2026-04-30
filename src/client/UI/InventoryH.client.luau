@@ -1,16 +1,18 @@
 local RepStorage = game:GetService("ReplicatedStorage")
 
-local oreDataModule = require(RepStorage.Modules.OreData)
-local addOresToFrame = require(RepStorage.Modules.AddOresToFrame)
-local addButtonAnims = require(RepStorage.Modules.AddButtonAnims)
+local oreDataModule = require(RepStorage.Shared.Data.OreData)
+local addOresToFrame = require(RepStorage.Shared.Util.AddOresToFrame)
+local addButtonAnims = require(RepStorage.Shared.Util.AddButtonAnims)
 
 local player = game:GetService("Players").LocalPlayer
-local char = player.Character or player.CharacterAdded:Wait()
+local _char = player.Character or player.CharacterAdded:Wait()
 local inventoryFolder = player:WaitForChild("Inventory")
 
 local oreFolder = inventoryFolder:FindFirstChild("Ores")
 
-local mainFrame = script.Parent.MainFrame
+local playerGui = player:WaitForChild("PlayerGui")
+local inventoryGui = playerGui:WaitForChild("InventoryGui")
+local mainFrame = inventoryGui.MainFrame
 local innerFrame = mainFrame.InnerFrame
 local inventoryFrame = innerFrame.InventoryFrame
 local inventoryScroll = inventoryFrame.Inventory.ScrollingFrame

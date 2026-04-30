@@ -1,6 +1,6 @@
 local Players = game:GetService("Players")
 
-local dataFolder = game:GetService("ServerScriptService").Data
+local dataFolder = game:GetService("ServerScriptService").Server.Unsorted___.Data
 
 local template = require(dataFolder.Template)
 local dataHandler = require(dataFolder.DataHandler)

@@ -3,6 +3,8 @@
 .rojo/
 sourcemap.json
 aftman.lock
+sourcemap.json
+settings.json
 
 # Dependencies
 node_modules/

@@ -1,4 +1,4 @@
-local animationManager = require(game:GetService("ReplicatedStorage").Modules.AnimationManager)
+local animationManager = require(game:GetService("Players").LocalPlayer.PlayerScripts.Client.Managers.AnimationManager)
 
 local player = game:GetService("Players").LocalPlayer
 local char = player.Character or player.CharacterAdded:Wait()

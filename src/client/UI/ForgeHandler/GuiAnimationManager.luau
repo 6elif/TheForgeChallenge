@@ -1,7 +1,8 @@
 local TweenService = game:GetService("TweenService")
 
 --main
-local forgeGui = script.Parent.Parent
+local playerGui = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
+local forgeGui = playerGui.ForgeGui
 local mainFrame = forgeGui.MainFrame
 local blackFrame = forgeGui.BlackFrame
 local blackBars = forgeGui.BlackBars

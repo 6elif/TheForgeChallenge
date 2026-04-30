@@ -1,6 +1,5 @@
 local TweenService = game:GetService("TweenService")
 local CAS = game:GetService("ContextActionService")
-local RunService = game:GetService("RunService")
 local ContentProvider = game:GetService("ContentProvider")
 
 local sprintModule = {}

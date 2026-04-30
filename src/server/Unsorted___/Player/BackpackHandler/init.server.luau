@@ -1,11 +1,10 @@
 local Players = game:GetService("Players")
 local RepStorage = game:GetService("ReplicatedStorage")
 
-local destroyingPickaxe = RepStorage.Events.DestroyingPickaxe
-local equipItemEvent = RepStorage.Events.EquipItem
+local destroyingPickaxe = RepStorage.Assets.Network.Functions.DestroyingPickaxe
+local equipItemEvent = RepStorage.Assets.Network.Events.EquipItem
 
-
-local pickaxeFolder = RepStorage.Pickaxes
+local pickaxeFolder = RepStorage.Assets.Models.Pickaxes
 
 local pickLocalScript = script.PickaxeLocal
 

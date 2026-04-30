@@ -1,32 +1,32 @@
 local RepStorage = game:GetService("ReplicatedStorage")
-local TweenService = game:GetService("TweenService")
 local ServerScriptService = game:GetService("ServerScriptService")
 local HttpService = game:GetService("HttpService")
 
-local rockData = require(RepStorage.Modules.RockData)
-local dataHandler = require(ServerScriptService.Data.DataHandler)
-local lootPlan = require(ServerScriptService.Modules.LootPlan)
-local oreDataModule = require(RepStorage.Modules.OreData)
+local rockData = require(RepStorage.Shared.Data.RockData)
+local dataHandler = require(ServerScriptService.Server.Unsorted___.Data.DataHandler)
+local lootPlan = require(RepStorage.Shared.Util.LootPlan)
+local oreDataModule = require(RepStorage.Shared.Data.OreData)
 
-local hitEvent = RepStorage.Events.Hit
-local pickaxeSfxEvent = RepStorage.Events.PickaxeSFX
-local miningEffectsEvent = RepStorage.Events.MiningEffectsEvent
-local collectedEvent = RepStorage.Events.OreCollected
-local notification = RepStorage.Events.Notification
+local event = RepStorage.Assets.Network.Events
+local hitEvent = event.Hit
+local pickaxeSfxEvent = event.PickaxeSFX
+local miningEffectsEvent = event.MiningEffectsEvent
+local collectedEvent = event.OreCollected
+local notification = event.Notification
 
-local vfx = RepStorage.VFX
+local vfx = RepStorage.Assets.Particles.VFX
 
 local plans = {}
 
-for rockName, data in pairs(rockData) do
+for rockName, _rockData in pairs(rockData) do
 	local orePlan = lootPlan.newMulti()
 	plans[rockName] = orePlan
 	
-	for oreName, data in pairs(oreDataModule.Data) do
-		for _, dropFromLocation in ipairs(data.DropsFrom) do
+	for oreName, oreData in pairs(oreDataModule.Data) do
+		for _, dropFromLocation in ipairs(oreData.DropsFrom) do
 			if dropFromLocation ~= rockName then continue end
 			
-			local rarity = (1 / data.Chance) * 100
+			local rarity = (1 / oreData.Chance) * 100
 			orePlan:AddLoot(oreName, rarity)
 		end
 	end
@@ -168,13 +168,13 @@ hitEvent.OnServerEvent:Connect(function(player, pickaxe)
 
 	if partsInBox ~= {} then 
 		local rocks = {}
-		for _, part in ipairs(partsInBox) do
-			if rocks[part.Parent] or not part.Parent:IsA("Model") then continue end
-			if part.Parent.Name == "Ore" then continue end
+		for _, partInBox in ipairs(partsInBox) do
+			if rocks[partInBox.Parent] or not partInBox.Parent:IsA("Model") then continue end
+			if partInBox.Parent.Name == "Ore" then continue end
 			
 			task.spawn(function()
-				local rock = part.Parent
-				rocks[part.Parent] = true
+				local rock = partInBox.Parent
+				rocks[partInBox.Parent] = true
 				
 				local rockOwnerId = rock:GetAttribute("HitByPlayer")
 				if rockOwnerId == player.UserId or not rockOwnerId then

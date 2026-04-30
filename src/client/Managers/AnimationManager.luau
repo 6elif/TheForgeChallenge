@@ -1,8 +1,8 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 
-local regularAnimsFolder = ReplicatedStorage:WaitForChild("RegularAnims")
-local pickaxeAnimsFolder = ReplicatedStorage:WaitForChild("PickaxeAnims")
+local regularAnimsFolder = ReplicatedStorage.Assets.Animations.RegularAnims
+local pickaxeAnimsFolder = ReplicatedStorage.Assets.Animations.PickaxeAnims
 
 local pickaxeAnimations = {
 	["Swing1"] = pickaxeAnimsFolder.Swing1,
@@ -151,8 +151,8 @@ function animationManager:SetEquipped(equipped: boolean)
 end
 
 function animationManager:StopAnims()
-	if updateConnection then updateConnection:Disconnect() updateConnection = nil end
-	if stateConnection then stateConnection:Disconnect() stateConnection = nil end
+	if updateConnection then updateConnection:Disconnect(); updateConnection = nil end
+	if stateConnection then stateConnection:Disconnect(); stateConnection = nil end
 
 	for _, track in pairs(loadedPickaxeAnims) do track:Stop(0.2) end
 	for _, track in pairs(loadedRegularAnims) do track:Stop(0.2) end

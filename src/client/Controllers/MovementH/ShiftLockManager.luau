@@ -1,7 +1,6 @@
 local Players = game:GetService("Players")
 local ContentProvider = game:GetService("ContentProvider")
 
-
 local MOUSE_LOCK_KEYS = "LeftControl,RightControl"
 local MOUSE_LOCK_IMAGE = "rbxassetid://117508370121623"
 

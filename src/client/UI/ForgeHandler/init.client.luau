@@ -1,11 +1,10 @@
 local RepStorage = game:GetService("ReplicatedStorage")
-local TweenService = game:GetService("TweenService")
 
-local armorProbabilities = require(RepStorage.Modules.ArmorProbabilities)
-local weaponProbabilities = require(RepStorage.Modules.WeaponProbabilities)
-local addOresToFrame = require(RepStorage.Modules.AddOresToFrame)
-local oreDataModule = require(RepStorage.Modules.OreData)
-local AddButtonAnims = require(RepStorage.Modules.AddButtonAnims)
+local armorProbabilities = require(RepStorage.Shared.Data.ArmorProbabilities)
+local weaponProbabilities = require(RepStorage.Shared.Data.WeaponProbabilities)
+local addOresToFrame = require(RepStorage.Shared.Util.AddOresToFrame)
+local oreDataModule = require(RepStorage.Shared.Data.OreData)
+local AddButtonAnims = require(RepStorage.Shared.Util.AddButtonAnims)
 
 local pump = require(script.PumpManager)
 local counterManager = require(script.CounterManager)
@@ -16,10 +15,9 @@ local pourManager = require(script.PourManager)
 
 local forge = workspace:WaitForChild("Forge")
 
-local forgeGui = script.Parent
+local playerGui = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
+local forgeGui = playerGui.ForgeGui
 local mainFrame = forgeGui.MainFrame
-local blackFrame = forgeGui.BlackFrame
-local blackBars = forgeGui.BlackBars
 local selectFrame = mainFrame.SelectFrame
 local selectScroll = selectFrame.ScrollingFrame
 local closeButton = selectFrame.Title.Close
@@ -39,7 +37,7 @@ local armorScroll = chancesFrame.ArmorScroll
 local proximityPrompt = forge:WaitForChild("ProximityPart").ProximityPrompt
 
 local player = game:GetService("Players").LocalPlayer
-local char = player.Character or player.CharacterAdded:Wait()
+local _char = player.Character or player.CharacterAdded:Wait()
 
 local MAX_HOLD_TIME = 1
 
@@ -97,6 +95,7 @@ local function findOpenSlot()
 			return slot, data.Button
 		end
 	end
+	return nil
 end
 
 local function checkIfOreInSlot(ore)
@@ -105,6 +104,7 @@ local function checkIfOreInSlot(ore)
 			return data.Button
 		end
 	end
+	return nil
 end
 
 local function updateChances()

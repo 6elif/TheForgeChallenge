@@ -2,8 +2,8 @@ local RunService = game:GetService("RunService")
 local UIS = game:GetService("UserInputService")
 local GuiService = game:GetService("GuiService")
 
-
-local forgeGui = script.Parent.Parent
+local playerGui = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
+local forgeGui = playerGui.ForgeGui
 local pumpFrame = forgeGui.PumpFrame
 local pump = pumpFrame.Pump
 local top = pump.Top

@@ -1,18 +1,17 @@
+local Players = game:GetService("Players")
 local RepStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local UIS = game:GetService("UserInputService")
 
-local animationManager = require(RepStorage.Modules.AnimationManager)
+local animationManager = require(Players.LocalPlayer.PlayerScripts.Client.Managers.AnimationManager)
 
-local hitEvent = RepStorage.Events.Hit
-local pickaxeSfxEvent = RepStorage.Events.PickaxeSFX
-local destroyingPickaxe = RepStorage.Events.DestroyingPickaxe
+local hitEvent = RepStorage.Assets.Network.Events.Hit
+local pickaxeSfxEvent = RepStorage.Assets.Network.Events.PickaxeSFX
+local destroyingPickaxe = RepStorage.Assets.Network.Functions.DestroyingPickaxe
 
 local pick = script.Parent
 local player = game:GetService("Players").LocalPlayer
 local char = player.Character or player.CharacterAdded:Wait()
-local hum = char:FindFirstChild("Humanoid")
-local animator = hum:FindFirstChild("Animator")
 
 local swing = 2
 local dBounce = false
@@ -21,9 +20,9 @@ local isHoldingM1 = false
 local function playImpactShake(intensity, speed, direction, hitDuration)
 	local camera = workspace.CurrentCamera
 	local startTime = os.clock()
-	local hitDuration = hitDuration or 0.2
+	local duration = hitDuration or 0.2
 	local returnDuration = 0.1
-	local totalDuration = hitDuration + returnDuration
+	local totalDuration = duration + returnDuration
 
 	local lastOffset = 0
 
@@ -32,11 +31,11 @@ local function playImpactShake(intensity, speed, direction, hitDuration)
 		local elapsed = os.clock() - startTime
 		local currentOffset = 0
 
-		if elapsed < hitDuration then
-			local alpha = elapsed / hitDuration
+		if elapsed < duration then
+			local alpha = elapsed / duration
 			currentOffset = alpha * intensity * direction
 		elseif elapsed < totalDuration then
-			local returnElapsed = elapsed - hitDuration
+			local returnElapsed = elapsed - duration
 			local alpha = returnElapsed / returnDuration
 			local quadAlpha = 1 - (alpha * alpha)
 

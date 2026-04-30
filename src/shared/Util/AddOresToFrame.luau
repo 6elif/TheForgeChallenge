@@ -1,19 +1,19 @@
 local RepStorage = game:GetService("ReplicatedStorage")
-local oreDataModule = require(RepStorage.Modules.OreData)
+local oreDataModule = require(RepStorage.Shared.Data.OreData)
 
 local player = game:GetService("Players").LocalPlayer
-local char = player.Character or player.CharacterAdded:Wait()
+local _char = player.Character or player.CharacterAdded:Wait()
 local inventory = player:WaitForChild("Inventory")
 local oresOwned = inventory:WaitForChild("Ores")
 
 local oreTemplate = player.PlayerGui.OreFrameTemplate.OreTemplate
 
-local oresFolder = RepStorage.Ores
+local oresFolder = RepStorage.Assets.Models.Ores
 
 local oresToFrame = {}
 
 local function addOreToFrame(ore, frame)
-	local data, color = oreDataModule.GetOreData(ore.Name)
+	local _data, color = oreDataModule.GetOreData(ore.Name)
 
 	local oreButton = oreTemplate:Clone()
 	oreButton.Name = ore.Name

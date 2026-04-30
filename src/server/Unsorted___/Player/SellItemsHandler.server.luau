@@ -1,9 +1,8 @@
 local RepStorage = game:GetService("ReplicatedStorage")
-local Players = game:GetService("Players")
 
-local oreDataModule = require(RepStorage.Modules.OreData)
+local oreDataModule = require(RepStorage.Shared.Data.OreData)
 
-local sellItems = RepStorage.Events.SellItems
+local sellItems = RepStorage.Assets.Network.Events.SellItems
 
 sellItems.OnServerEvent:Connect(function(player, itemsToSell)
 	local inventory = player:FindFirstChild("Inventory")

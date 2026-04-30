@@ -1,13 +1,13 @@
 local TweenService = game:GetService("TweenService")
 local RepStorage = game:GetService("ReplicatedStorage")
 
-local soundManager = require(RepStorage.Modules.SoundManager)
-local oreDataManager = require(RepStorage.Modules.OreData)
+local soundManager = require(game:GetService("Players").LocalPlayer.PlayerScripts.Client.Managers.SoundManager)
+local oreDataManager = require(RepStorage.Shared.Data.OreData)
 
-local miningEffectsEvent = RepStorage.Events.MiningEffectsEvent
+local miningEffectsEvent = RepStorage.Assets.Network.Events.MiningEffectsEvent
 
-local vfx = RepStorage.VFX
-local dmgTakenGui = script.DmgTakenGui
+local vfx = RepStorage.Assets.Particles.VFX
+local dmgTakenGui = game:GetService("Players").LocalPlayer.PlayerGui:WaitForChild("DmgTakenGui")
 
 local function oreCollection(rock, hrp)
 	task.wait(0.1)
@@ -20,7 +20,7 @@ local function oreCollection(rock, hrp)
 			local oreDropVfx = vfx.OreDropped:Clone()
 			oreDropVfx.Parent = ore
 			local allTags = ore:GetTags()
-			local oreData, color = oreDataManager.GetOreData(allTags[1])
+			local _, color = oreDataManager.GetOreData(allTags[1])
 			oreDropVfx.Light.Color = ColorSequence.new(color)
 			oreDropVfx.Stars.Color = ColorSequence.new(color)
 

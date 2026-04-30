@@ -1,16 +1,18 @@
 local RepStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
 
-local collectedEvent = RepStorage.Events.OreCollected
-local hitEvent = RepStorage.Events.Hit
-local notificationEvent = RepStorage.Events.Notification
+local events = RepStorage.Assets.Network.Events
+local collectedEvent = events.OreCollected
+local hitEvent = events.Hit
+local notificationEvent = events.Notification
 
-local oreDataModule = require(RepStorage.Modules.OreData)
-local soundManager = require(RepStorage.Modules.SoundManager)
+local oreDataModule = require(RepStorage.Shared.Data.OreData)
+local soundManager = require(game:GetService("Players").LocalPlayer.PlayerScripts.Client.Managers.SoundManager)
 
-local oreFolder = RepStorage.Ores
+local oreFolder = RepStorage.Assets.Models.Ores
 
-local notificationGui = script.Parent
+local playerGui = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+local notificationGui = playerGui:WaitForChild("NotificationGui")
 local mainFrame = notificationGui.MainFrame
 local flashEffect = notificationGui.Parent.MiningGui.FlashEffect
 

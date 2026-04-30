@@ -1,7 +1,7 @@
 
 local RepStorage = game:GetService("ReplicatedStorage")
 
-local rocks = RepStorage.Rocks
+local rocks = RepStorage.Assets.Models.Rocks
 
 local rockData = {
 	Pebble = {

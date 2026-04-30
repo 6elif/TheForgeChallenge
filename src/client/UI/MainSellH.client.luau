@@ -1,16 +1,11 @@
-local Players = game:GetService("Players")
 local RepStorage = game:GetService("ReplicatedStorage")
 
-local oreDataModule = require(RepStorage.Modules.OreData)
-local addOresToFrame = require(RepStorage.Modules.AddOresToFrame)
+local addOresToFrame = require(RepStorage.Shared.Util.AddOresToFrame)
 
-local sellItems = RepStorage.Events.SellItems
+local sellItems = RepStorage.Assets.Network.Events.SellItems
 
-local player = Players.LocalPlayer
-local inventory = player:WaitForChild("Inventory")
-local ores = inventory:FindFirstChild("Ores")
-
-local sellGui = script.Parent
+local playerGui = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
+local sellGui = playerGui.SellGui
 local mainFrame = sellGui.MainFrame
 local mainSellFrame = mainFrame.InnerFrame.MainSell
 local mainContrainer = mainSellFrame.Container
@@ -262,7 +257,7 @@ textBox:GetPropertyChangedSignal("Text"):Connect(function()
 	local quantity
 	if selectedItem.Quantity.Visible then
 		quantity = string.gsub(selectedItem.Quantity.Text, "%D", "")
-		quantity = tonumber(quantity)
+		quantity = tonumber(quantity) or 1
 	else
 		quantity = 1
 	end
@@ -270,7 +265,8 @@ textBox:GetPropertyChangedSignal("Text"):Connect(function()
 	if newText == "" then
 		newText = "1"
 	end
-	textBox.Text = math.clamp(tonumber(newText), 1, quantity)
+
+	textBox.Text = math.clamp(tonumber(newText) or 1, 1, quantity)
 end)
 
 
@@ -283,7 +279,7 @@ acceptButton.Activated:Connect(function()
 		local quantity
 		if item.Quantity.Visible then
 			quantity = string.gsub(item.Quantity.Text, "%D", "")
-			quantity = tonumber(quantity)
+			quantity = tonumber(quantity) or 1
 		else
 			quantity = 1
 		end
@@ -302,10 +298,10 @@ sellectAllButton.Activated:Connect(function()
 		
 		if itemInSelectedScroll then
 			local quantityInStash = string.gsub(item.Quantity.Text, "%D", "")
-			quantityInStash = tonumber(quantityInStash)
+			quantityInStash = tonumber(quantityInStash) or 1
 			
 			local quantityInSelected = string.gsub(itemInSelectedScroll.Quantity.Text, "%D", "")
-			quantityInSelected = tonumber(quantityInStash)
+			quantityInSelected = tonumber(quantityInSelected) or 1
 			
 			if not itemInSelectedScroll.Quantity.Visible then
 				itemInSelectedScroll.Quantity.Text = "x"..(quantityInStash + 1)

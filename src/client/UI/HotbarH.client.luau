@@ -5,23 +5,23 @@ local TweenService = game:GetService("TweenService")
 local GuiService = game:GetService("GuiService")
 local RunService = game:GetService("RunService")
 
-local equipItemEvent = RepStorage.Events.EquipItem
+local equipItemEvent = RepStorage.Assets.Network.Events.EquipItem
 
 -- Hide default
 game.StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Backpack, false)
 
-local pickaxeFolder = RepStorage.Pickaxes
-
-local hotbarGui = script.Parent
-local hotbarFrame = hotbarGui.HotbarFrame
-local hotbarInventoryFrame = hotbarGui.HotbarInventoryFrame
-local inventoryFrame = hotbarGui.Parent.InvenotryGui.MainFrame
+local pickaxeFolder = RepStorage.Assets.Models.Pickaxes
 
 local player = Players.LocalPlayer
 local char = player.Character or player.CharacterAdded:Wait()
 local hum = char:FindFirstChild("Humanoid")
 local backpack = player.Backpack
-local playerGui = player.PlayerGui
+
+local playerGui = player:WaitForChild("PlayerGui")
+local hotbarGui = playerGui:WaitForChild("HotbarGui")
+local hotbarFrame = hotbarGui.HotbarFrame
+local hotbarInventoryFrame = hotbarGui.HotbarInventoryFrame
+local inventoryFrame = hotbarGui.Parent.InventoryGui.MainFrame
 
 local DEFAULT_SLOT_SIZE = hotbarFrame.Slot0.Size
 
@@ -165,13 +165,7 @@ local function handleToolInHotbarInventory(frame, tool)
 		pressed = nil,
 		unpressed = nil
 	}
-
-	local function cleanup()
-		if tracker.pressed then tracker.pressed:Disconnect() end
-		if tracker.unpressed then tracker.unpressed:Disconnect() end
-		connectionTrackers[frame] = nil
-	end
-
+	
 	addAnims(frame.MovableFrame, UDim2.new(1, 0, 1, 0))
 
 	tracker.pressed = frame.MovableFrame.Button.MouseButton1Down:Connect(function()
