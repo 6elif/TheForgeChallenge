@@ -1,5 +1,16 @@
+# Tools
 .argon/
+.rojo/
+sourcemap.json
+aftman.lock
+
+# Dependencies
+node_modules/
+
+# Roblox Files
 *.rbxl
 *.rbxlx
-node_modules/
-.DS_Store
+*.lock
+
+# Build files
+build/
