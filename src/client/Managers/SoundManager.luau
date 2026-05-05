@@ -9,8 +9,11 @@ SoundManager.Settings = {
 	Ambience = 0.5
 }
 
-function SoundManager.PlaySound(soundName, category, position, pitchOn)
-	pitchOn = pitchOn or true
+function SoundManager.PlaySound(data)
+	local soundName = data.soundName
+	local category = data.category
+	local position = data.position
+	local pitchOn = data.pitchOn or true
 	
 	local soundTemplate = SoundsFolder[category]:FindFirstChild(soundName)
 	if not soundTemplate then 

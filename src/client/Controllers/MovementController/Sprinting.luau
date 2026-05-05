@@ -1,14 +1,7 @@
 local TweenService = game:GetService("TweenService")
 local CAS = game:GetService("ContextActionService")
 local ContentProvider = game:GetService("ContentProvider")
-
-local sprintModule = {}
-
-sprintModule.DefaultSpeed = 16
-sprintModule.SprintSpeed = 25
-
-sprintModule.DefaultFov = 70
-sprintModule.SprintFov = 80
+local Players = game:GetService("Players")
 
 local ACTION_NAME = "SprintAction"
 local BUTTON_TITLE = "Run"
@@ -19,21 +12,28 @@ local BUTTON_TEXT_COLOR = Color3.new(1, 1, 1)
 local BUTTON_TEXT_SIZE = 24
 local BUTTON_TEXT_TRANSPARENCY = 0.5
 
-local player = game:GetService("Players").LocalPlayer
-local camera = workspace.CurrentCamera
+local player
+local camera
 local char = nil
 local hum : Humanoid = nil
 
 local currentIcon = nil 
 local currentText = nil
 local isMobile = false
+local isSprinting = false
 
-local sprinting = false
+local Sprinting = {}
+
+Sprinting.DefaultSpeed = 16
+Sprinting.SprintSpeed = 25
+
+Sprinting.DefaultFov = 70
+Sprinting.SprintFov = 80
 
 local function updateVisuals()
 	if not currentIcon or not currentText then return end
 
-	if sprinting then
+	if isSprinting then
 		currentIcon.Image = BUTTON_PRESSED_IMAGE
 		currentText.TextColor3 = BUTTON_PRESSED_TEXT_COLOR
 	else
@@ -43,22 +43,22 @@ local function updateVisuals()
 end
 
 local function startSprinting()
-	sprinting = true
+	isSprinting = true
 	
 	local info = TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-	local fovTween = TweenService:Create(camera, info, {FieldOfView = sprintModule.SprintFov})
-	local sprintTween = TweenService:Create(hum, info, {WalkSpeed = sprintModule.SprintSpeed})
+	local fovTween = TweenService:Create(camera, info, {FieldOfView = Sprinting.SprintFov})
+	local sprintTween = TweenService:Create(hum, info, {WalkSpeed = Sprinting.SprintSpeed})
 	sprintTween:Play()
 	fovTween:Play()
 	updateVisuals()
 end
 
 local function stopSprinting()
-	sprinting = false
+	isSprinting = false
 	
 	local info = TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-	local fovTween = TweenService:Create(camera, info, {FieldOfView = sprintModule.DefaultFov})
-	local sprintTween = TweenService:Create(hum, info, {WalkSpeed = sprintModule.DefaultSpeed})
+	local fovTween = TweenService:Create(camera, info, {FieldOfView = Sprinting.DefaultFov})
+	local sprintTween = TweenService:Create(hum, info, {WalkSpeed = Sprinting.DefaultSpeed})
 	sprintTween:Play()
 	fovTween:Play()
 	updateVisuals()
@@ -69,7 +69,7 @@ local function handleSprintAction(actionName, inputState, inputObject)
 
 	if isToggleDevice then
 		if inputState == Enum.UserInputState.Begin then
-			if not sprinting then
+			if not isSprinting then
 				startSprinting()
 			else
 				stopSprinting()
@@ -85,7 +85,9 @@ local function handleSprintAction(actionName, inputState, inputObject)
 	end
 end
 
-function sprintModule:Init()
+function Sprinting.Start()
+	player = Players.LocalPlayer
+	camera = workspace.CurrentCamera
 	char = player.Character or player.CharacterAdded:Wait()
 	hum = char:FindFirstChild("Humanoid")
 	
@@ -194,4 +196,4 @@ function sprintModule:Init()
 	end)
 end
 
-return sprintModule
+return Sprinting

@@ -1,37 +1,19 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 
-local regularAnimsFolder = ReplicatedStorage.Assets.Animations.RegularAnims
-local pickaxeAnimsFolder = ReplicatedStorage.Assets.Animations.PickaxeAnims
+local regularAnimsFolder
+local pickaxeAnimsFolder
 
-local pickaxeAnimations = {
-	["Swing1"] = pickaxeAnimsFolder.Swing1,
-	["Swing2"] = pickaxeAnimsFolder.Swing2,
-	["Equip"] = pickaxeAnimsFolder.Equip,
-	["Jump"] = pickaxeAnimsFolder.Jump,
-	["Walk"] = pickaxeAnimsFolder.Walk,
-	["Run"] = pickaxeAnimsFolder.Run,
-	["Idle"] = pickaxeAnimsFolder.Idle,
-	["Land"] = pickaxeAnimsFolder.Land,
-	["Fall"] = pickaxeAnimsFolder.Fall,
-}
-
-local regularAnimations = {
-	["Jump"] = regularAnimsFolder.Jump,
-	["Walk"] = regularAnimsFolder.Walk,
-	["Run"] = regularAnimsFolder.Run,
-	["Idle"] = regularAnimsFolder.Idle,
-	["Land"] = regularAnimsFolder.Land,
-	["Fall"] = regularAnimsFolder.Fall,
-}
+local pickaxeAnimations = {}
+local regularAnimations = {}
 
 local loadedPickaxeAnims = {}
 local loadedRegularAnims = {}
 local updateConnection = nil
 local stateConnection = nil
 
-local animationManager = {}
-animationManager.IsPickaxeEquipped = false
+local AnimationManager = {}
+AnimationManager.IsPickaxeEquipped = false
 
 local function loadAnims(animator, animsToLoad, tableToPlaceThemIn)
 	for name, anim in pairs(animsToLoad) do
@@ -57,9 +39,33 @@ local function stopAllTracks(trackTable)
 	end
 end
 
-function animationManager:initialize(animator: Animator)
+function AnimationManager.Init(animator: Animator)
 	table.clear(loadedPickaxeAnims)
 	table.clear(loadedRegularAnims)
+
+	regularAnimsFolder = ReplicatedStorage.Assets.Animations.RegularAnims
+	pickaxeAnimsFolder = ReplicatedStorage.Assets.Animations.PickaxeAnims
+
+	pickaxeAnimations = {
+		["Swing1"] = pickaxeAnimsFolder.Swing1,
+		["Swing2"] = pickaxeAnimsFolder.Swing2,
+		["Equip"] = pickaxeAnimsFolder.Equip,
+		["Jump"] = pickaxeAnimsFolder.Jump,
+		["Walk"] = pickaxeAnimsFolder.Walk,
+		["Run"] = pickaxeAnimsFolder.Run,
+		["Idle"] = pickaxeAnimsFolder.Idle,
+		["Land"] = pickaxeAnimsFolder.Land,
+		["Fall"] = pickaxeAnimsFolder.Fall,
+	}
+
+	regularAnimations = {
+		["Jump"] = regularAnimsFolder.Jump,
+		["Walk"] = regularAnimsFolder.Walk,
+		["Run"] = regularAnimsFolder.Run,
+		["Idle"] = regularAnimsFolder.Idle,
+		["Land"] = regularAnimsFolder.Land,
+		["Fall"] = regularAnimsFolder.Fall,
+	}
 
 	loadAnims(animator, pickaxeAnimations, loadedPickaxeAnims)
 	loadAnims(animator, regularAnimations, loadedRegularAnims)
@@ -69,12 +75,12 @@ function animationManager:initialize(animator: Animator)
 
 	stateConnection = humanoid.StateChanged:Connect(function(_, newState)
 		if newState == Enum.HumanoidStateType.Landed then
-			self:PlayOneShot("Land")
+			AnimationManager:PlayOneShot("Land")
 		end
 	end)
 end
 
-function animationManager:StartAnims(humanoid)
+function AnimationManager.StartAnims(humanoid)
 	if updateConnection then updateConnection:Disconnect() end
 
 	updateConnection = RunService.RenderStepped:Connect(function()
@@ -82,26 +88,26 @@ function animationManager:StartAnims(humanoid)
 		local state = humanoid:GetState()
 
 		if state == Enum.HumanoidStateType.Jumping then
-			self:PlayExclusive("Jump")
+			AnimationManager:PlayExclusive("Jump")
 			return
 		elseif state == Enum.HumanoidStateType.Freefall then
-			self:PlayExclusive("Fall")
+			AnimationManager:PlayExclusive("Fall")
 			return
 		end
 
 		if velocity > 0.1 then
 			if humanoid.WalkSpeed > 20 then
-				self:PlayExclusive("Run")
+				AnimationManager:PlayExclusive("Run")
 			else
-				self:PlayExclusive("Walk")
+				AnimationManager:PlayExclusive("Walk")
 			end
 		else
-			self:PlayExclusive("Idle")
+			AnimationManager:PlayExclusive("Idle")
 		end
 	end)
 end
 
-function animationManager:PlayExclusive(name)
+function AnimationManager:PlayExclusive(name)
 	local currentSet = self.IsPickaxeEquipped and loadedPickaxeAnims or loadedRegularAnims
 	local target = currentSet[name]
 
@@ -118,28 +124,29 @@ function animationManager:PlayExclusive(name)
 	target:Play(0.2)
 end
 
-function animationManager:PlayOneShot(name)
+function AnimationManager:PlayOneShot(name)
 	local currentSet = self.IsPickaxeEquipped and loadedPickaxeAnims or loadedRegularAnims
 	if currentSet[name] then
 		currentSet[name]:Play(0.1)
 	end
 end
 
-function animationManager:PlayEquip()
+function AnimationManager:PlayEquip()
 	if loadedPickaxeAnims["Equip"] then
 		loadedPickaxeAnims["Equip"]:Play(0.1)
 	end
 end
 
-function animationManager:PlaySwing(swingNumber)
+function AnimationManager:PlaySwing(swingNumber)
 	local name = "Swing" .. swingNumber
 	if loadedPickaxeAnims[name] then
 		loadedPickaxeAnims[name]:Play(0.1)
 		return loadedPickaxeAnims[name]
 	end
+	return nil
 end
 
-function animationManager:SetEquipped(equipped: boolean)
+function AnimationManager:SetEquipped(equipped: boolean)
 	self.IsPickaxeEquipped = equipped
 
 	stopAllTracks(loadedRegularAnims)
@@ -150,7 +157,7 @@ function animationManager:SetEquipped(equipped: boolean)
 	end
 end
 
-function animationManager:StopAnims()
+function AnimationManager:StopAnims()
 	if updateConnection then updateConnection:Disconnect(); updateConnection = nil end
 	if stateConnection then stateConnection:Disconnect(); stateConnection = nil end
 
@@ -158,4 +165,4 @@ function animationManager:StopAnims()
 	for _, track in pairs(loadedRegularAnims) do track:Stop(0.2) end
 end
 
-return animationManager
+return AnimationManager

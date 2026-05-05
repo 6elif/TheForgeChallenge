@@ -4,9 +4,9 @@ local ContentProvider = game:GetService("ContentProvider")
 local MOUSE_LOCK_KEYS = "LeftControl,RightControl"
 local MOUSE_LOCK_IMAGE = "rbxassetid://117508370121623"
 
-local shiftLockManager = {}
+local shiftLock = {}
 
-function shiftLockManager:Init()
+function shiftLock.Start()
 	local player = Players.LocalPlayer
 	local mouseLockController = player
 		.PlayerScripts
@@ -55,4 +55,4 @@ function shiftLockManager:Init()
 	end)
 end
 
-return shiftLockManager
+return shiftLock
