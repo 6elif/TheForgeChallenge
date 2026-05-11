@@ -18,6 +18,6 @@ Absolutely. If you want to poke around, learn from my scripts, or literally use 
 **The only rule:** Please give me credit. (A shoutout in your game or a link back to this repo is all I ask). See the [LICENSE](LICENSE) file for the boring legal details (it's just an MIT license).
 
 ### ⚠️ Quick Disclaimer
-This is a *speed challenge*. I have exactly 100 days to build an entire game. Because of that, the code in here is optimised for **execution speed and iteration**, not necessarily picture-perfect refactoring.
+This is a *speed challenge*. I have exactly 100 days to build an entire game. Because of that, the code in here is optimised for **execution speed and iteration**, not necessarily picture-perfect refactoring. Also I just moved to a Rojo, VSCode-based setup, so for a few days the architecture isn't going to look too sound.
 
 Thanks for following the journey! 🚀
