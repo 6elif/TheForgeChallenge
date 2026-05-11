@@ -1,4 +1,4 @@
-# ⚔️ The Forge Challenge: Recreating "The Forge" world 1 in 100 days to get hired by a professional studio :3
+# ⚔️ Recreating "The Forge" world 1 in 100 days to get hired by a professional studio :3
 
 Welcome to the repo! 👋 
 
