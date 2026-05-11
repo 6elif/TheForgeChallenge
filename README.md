@@ -15,7 +15,7 @@ I’ve decided to make this repository 100% public for complete transparency. Yo
 ### 🤝 Can I use this code?
 Absolutely. If you want to poke around, learn from my scripts, or literally use them in your own game, go for it! I don't mind. 
 
-**The only rule:** Please give me credit. (A shoutout in your game or a link back to this repo is all I ask). See the `LICENSE` file for the boring legal details (it's just an MIT license).
+**The only rule:** Please give me credit. (A shoutout in your game or a link back to this repo is all I ask). See the [LICENSE](LICENSE) file for the boring legal details (it's just an MIT license).
 
 ### ⚠️ Quick Disclaimer
 This is a *speed challenge*. I have exactly 100 days to build an entire game. Because of that, the code in here is optimised for **execution speed and iteration**, not necessarily picture-perfect refactoring.
