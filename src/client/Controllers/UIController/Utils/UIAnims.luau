@@ -5,9 +5,23 @@ local unHoverInfo = TweenInfo.new(0.15, Enum.EasingStyle.Sine, Enum.EasingDirect
 
 local buttonsHandled = {}
 
-local addAnims = {}
+local UIAnims = {}
 
-function addAnims:addAnimationsToButton(button : GuiButton, data)
+function UIAnims.PopUpAnim(gui, defaultSize, out)
+	local tween, info
+	if out then
+		info = TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
+		tween = TweenService:Create(gui, info, {Size = UDim2.new(defaultSize.X.Scale * 1.1, 0, defaultSize.Y.Scale * 1.1, 0)})
+	else
+		info = TweenInfo.new(0.15, Enum.EasingStyle.Sine, Enum.EasingDirection.In)
+		tween = TweenService:Create(gui, info, {Size = defaultSize})
+	end
+
+	tween:Play()
+    return tween
+end
+
+function UIAnims.AddAnimationsToButton(button : GuiButton, data)
 	local defaultSize : UDim2 = data.defaultSize
 	local maxSize : UDim2 = data.maxSize or UDim2.fromScale(defaultSize.X.Scale * 1.05, defaultSize.Y.Scale * 1.05)
 	local minSize : UDim2 = data.minSize or UDim2.fromScale(defaultSize.X.Scale * 0.95, defaultSize.Y.Scale * 0.95)
@@ -50,7 +64,7 @@ function addAnims:addAnimationsToButton(button : GuiButton, data)
 	buttonsHandled[button] = cons
 end
 
-function addAnims:CleanUp(button)
+function UIAnims.CleanUp(button)
 	if buttonsHandled[button] then 
 		for _, con in pairs(buttonsHandled[button]) do
 			con:Disconnect()
@@ -59,4 +73,4 @@ function addAnims:CleanUp(button)
 	end
 end
 
-return addAnims
+return UIAnims

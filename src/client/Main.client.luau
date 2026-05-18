@@ -9,13 +9,15 @@ for _, controller in ipairs(controllerFolder:GetChildren()) do
         table.insert(controllers, controllerModule)
 
         if controllerModule.Init then
-            controllerModule.Init()
+            controllerModule:Init()
         end
     end
 end
 
 for _, controller in ipairs(controllers) do
     if controller.Start then
-        task.spawn(controller.Start)
+        task.spawn(function()
+            controller:Start()
+        end)
     end
 end

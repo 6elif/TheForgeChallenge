@@ -1,18 +1,15 @@
-local RepStorage = game:GetService("ReplicatedStorage")
-local oreDataModule = require(RepStorage.Shared.Data.OreData)
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Players = game:GetService("Players")
 
-local player = game:GetService("Players").LocalPlayer
-local _char = player.Character or player.CharacterAdded:Wait()
-local inventory = player:WaitForChild("Inventory")
-local oresOwned = inventory:WaitForChild("Ores")
+local oreDataModule = require(ReplicatedStorage.Shared.Data.OreData)
 
-local oreTemplate = player.PlayerGui.OreFrameTemplate.OreTemplate
-
-local oresFolder = RepStorage.Assets.Models.Ores
+local oresFolder = ReplicatedStorage.Assets.Models.Ores
 
 local oresToFrame = {}
 
 local function addOreToFrame(ore, frame)
+	local oreTemplate = Players.LocalPlayer.PlayerGui.OreFrameTemplate.OreTemplate
+
 	local _data, color = oreDataModule.GetOreData(ore.Name)
 
 	local oreButton = oreTemplate:Clone()
@@ -48,6 +45,9 @@ local function addOreToFrame(ore, frame)
 end
 
 function oresToFrame.AddOres(frame)
+	local inventory = Players.LocalPlayer:WaitForChild("Inventory")
+	local oresOwned = inventory:WaitForChild("Ores")
+
 	local allOreButtons = {}
 	for _, ore in ipairs(oresOwned:GetChildren()) do
 		if not ore:IsA("IntValue") then continue end

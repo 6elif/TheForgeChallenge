@@ -2,25 +2,35 @@ local Players = game:GetService("Players")
 
 local Sprinting = require(script.Sprinting)
 local ShiftLock = require(script.ShiftLock)
-local AnimationManager = require(Players.LocalPlayer.PlayerScripts.Client.Managers.AnimationManager)
+local AnimationManager = require(script.Parent.Parent.Managers.AnimationManager)
 
 local MovementController = {}
 
-function MovementController.Init()
-    Players.LocalPlayer.CharacterAdded:Connect(function(char)
-        local humanoid = char:WaitForChild("Humanoid")
-        local animator = humanoid:WaitForChild("Animator")
-        
-        AnimationManager.Init(animator)
-    end)
+function MovementController:Init()
+    self.Player = Players.LocalPlayer
 end
 
-function MovementController.Start()
-    local player = Players.LocalPlayer
-    local char = player.Character or player.CharacterAdded:Wait()
-    local humanoid = char:FindFirstChild("Humanoid")
-
+function MovementController:OnCharacterAdded(character: Model)
+    local humanoid = character:WaitForChild("Humanoid")
+    local animator = humanoid:WaitForChild("Animator")
+    
+    AnimationManager.Init(animator)
     AnimationManager.StartAnims(humanoid)
+
+    ShiftLock.Start()
+end
+
+function MovementController:Start()
+   self.Player.CharacterAdded:Connect(function(character)
+        self:OnCharacterAdded(character)
+    end)
+    
+    if self.Player.Character then
+        task.spawn(function()
+            self:OnCharacterAdded(self.Player.Character)
+        end)
+    end
+    
     Sprinting.Start()
     ShiftLock.Start()
 end

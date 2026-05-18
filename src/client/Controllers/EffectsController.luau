@@ -179,7 +179,7 @@ local playEffect = {
 }
 
 function EffectsController.Init()
-	effectsEvent = RepStorage.Assets.Network.Events.effectsEvent
+	effectsEvent = RepStorage.Assets.Network.Events.Effects
 	dmgTakenGui = Players.LocalPlayer.PlayerGui:WaitForChild("DmgTakenGui")
 	vfx = RepStorage.Assets.Particles.VFX
 
