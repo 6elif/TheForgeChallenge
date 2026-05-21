@@ -12,188 +12,168 @@ local BUTTON_TEXT_COLOR = Color3.new(1, 1, 1)
 local BUTTON_TEXT_SIZE = 24
 local BUTTON_TEXT_TRANSPARENCY = 0.5
 
-local player
-local camera
-local char = nil
-local hum : Humanoid = nil
-
-local currentIcon = nil 
-local currentText = nil
-local isMobile = false
-local isSprinting = false
-
 local Sprinting = {}
 
 Sprinting.DefaultSpeed = 16
 Sprinting.SprintSpeed = 25
-
 Sprinting.DefaultFov = 70
 Sprinting.SprintFov = 80
 
-local function updateVisuals()
-	if not currentIcon or not currentText then return end
+function Sprinting:UpdateVisuals()
+    if not self.CurrentIcon or not self.CurrentText then return end
 
-	if isSprinting then
-		currentIcon.Image = BUTTON_PRESSED_IMAGE
-		currentText.TextColor3 = BUTTON_PRESSED_TEXT_COLOR
-	else
-		currentIcon.Image = BUTTON_IMAGE
-		currentText.TextColor3 = BUTTON_TEXT_COLOR
-	end
+    if self.IsSprinting then
+        self.CurrentIcon.Image = BUTTON_PRESSED_IMAGE
+        self.CurrentText.TextColor3 = BUTTON_PRESSED_TEXT_COLOR
+    else
+        self.CurrentIcon.Image = BUTTON_IMAGE
+        self.CurrentText.TextColor3 = BUTTON_TEXT_COLOR
+    end
 end
 
-local function startSprinting()
-	isSprinting = true
-	
-	local info = TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-	local fovTween = TweenService:Create(camera, info, {FieldOfView = Sprinting.SprintFov})
-	local sprintTween = TweenService:Create(hum, info, {WalkSpeed = Sprinting.SprintSpeed})
-	sprintTween:Play()
-	fovTween:Play()
-	updateVisuals()
+function Sprinting:StartSprinting()
+    if not self.Humanoid then return end
+    self.IsSprinting = true
+    
+    local info = TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+    local fovTween = TweenService:Create(self.Camera, info, {FieldOfView = self.SprintFov})
+    local sprintTween = TweenService:Create(self.Humanoid, info, {WalkSpeed = self.SprintSpeed})
+    
+    sprintTween:Play()
+    fovTween:Play()
+    self:UpdateVisuals()
 end
 
-local function stopSprinting()
-	isSprinting = false
-	
-	local info = TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-	local fovTween = TweenService:Create(camera, info, {FieldOfView = Sprinting.DefaultFov})
-	local sprintTween = TweenService:Create(hum, info, {WalkSpeed = Sprinting.DefaultSpeed})
-	sprintTween:Play()
-	fovTween:Play()
-	updateVisuals()
+function Sprinting:StopSprinting()
+    if not self.Humanoid then return end
+    self.IsSprinting = false
+    
+    local info = TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+    local fovTween = TweenService:Create(self.Camera, info, {FieldOfView = self.DefaultFov})
+    local sprintTween = TweenService:Create(self.Humanoid, info, {WalkSpeed = self.DefaultSpeed})
+    
+    sprintTween:Play()
+    fovTween:Play()
+    self:UpdateVisuals()
 end
 
 local function handleSprintAction(actionName, inputState, inputObject)
-	local isToggleDevice = isMobile or inputObject.UserInputType == Enum.UserInputType.Gamepad1
+    local self = Sprinting 
+    local isToggleDevice = self.IsMobile or inputObject.UserInputType == Enum.UserInputType.Gamepad1
 
-	if isToggleDevice then
-		if inputState == Enum.UserInputState.Begin then
-			if not isSprinting then
-				startSprinting()
-			else
-				stopSprinting()
-			end
-		end
-	else
-		-- PC "Hold" Logic
-		if inputState == Enum.UserInputState.Begin then
-			startSprinting()
-		elseif inputState == Enum.UserInputState.End then
-			stopSprinting()
-		end
-	end
+    if isToggleDevice then
+        if inputState == Enum.UserInputState.Begin then
+            if not self.IsSprinting then
+                self:StartSprinting()
+            else
+                self:StopSprinting()
+            end
+        end
+    else
+        if inputState == Enum.UserInputState.Begin then
+            self:StartSprinting()
+        elseif inputState == Enum.UserInputState.End then
+            self:StopSprinting()
+        end
+    end
 end
 
-function Sprinting.Start()
-	player = Players.LocalPlayer
-	camera = workspace.CurrentCamera
-	char = player.Character or player.CharacterAdded:Wait()
-	hum = char:FindFirstChild("Humanoid")
-	
-	if not hum then return end
-	
-	task.spawn(function()
-		local forceRenderGui = Instance.new("ScreenGui")
-		forceRenderGui.Name = "ForceRenderContainer"
-		forceRenderGui.DisplayOrder = -1000
-		forceRenderGui.Parent = player:WaitForChild("PlayerGui")
-		
-		local imagesToPreloadIds = {
-			BUTTON_IMAGE, 
-			BUTTON_PRESSED_IMAGE
-		}
-		
-		for _, id in ipairs(imagesToPreloadIds) do
-			if type(id) ~= "string" then continue end
-			
-			local clone = Instance.new("ImageLabel")
-			clone.Image = id
-			clone.Size = UDim2.new(0, 1, 0, 1)
-			clone.ImageTransparency = 0.99
-			clone.Parent = forceRenderGui
-			
-			table.insert(imagesToPreloadIds, clone)
-		end
-		
-		ContentProvider:PreloadAsync(imagesToPreloadIds)
+function Sprinting:OnCharacterSpawn(character)
+    self.Character = character
+    self.Humanoid = character:WaitForChild("Humanoid")
+    self:StopSprinting()
+    
+    self.Humanoid.Died:Connect(function()
+        self:StopSprinting()
+    end)
+end
 
-		task.wait(0.5)
-		forceRenderGui:Destroy()
-	end)
-	
-	player.CharacterAdded:Connect(function(newChar)
-		char = newChar
-		hum = newChar:WaitForChild("Humanoid")
-		stopSprinting()
-	end)
-	
-	CAS:BindAction(
-		ACTION_NAME,
-		handleSprintAction,
-		true,
-		Enum.KeyCode.LeftShift, -- Keyboard
-		Enum.KeyCode.ButtonL3   -- Gamepad
-	)
-	
-	local button = CAS:GetButton(ACTION_NAME)
-	
-	if button then		
-		local playerGui = player:WaitForChild("PlayerGui")
-		local touchGui = playerGui:WaitForChild("TouchGui", 5)
-		if touchGui then
-			local controlFrame = touchGui:WaitForChild("TouchControlFrame", 5)
-			if controlFrame then
-				local jumpButton = controlFrame:FindFirstChild("JumpButton")
-				if jumpButton then
-					button.Size = jumpButton.Size
-					
-					button.Position = UDim2.new(
-						jumpButton.Position.X.Scale, 
-						jumpButton.Position.X.Offset,
-						jumpButton.Position.Y.Scale, 
-						jumpButton.Position.Y.Offset - (jumpButton.Size.Y.Offset * 1.1)
-					)
-				end
-			end
-		end
-		
-		if BUTTON_IMAGE then
-			isMobile = true
-			
-			button.ImageTransparency = 1 
-			button.BackgroundTransparency = 1
-			
-			local icon = Instance.new("ImageLabel")
-			icon.Name = "CustomIcon"
-			icon.Size = UDim2.fromScale(1, 1)
-			icon.BackgroundTransparency = 1
-			icon.ScaleType = Enum.ScaleType.Stretch
-			icon.Image = BUTTON_IMAGE 
-			
-			local text = Instance.new("TextLabel")
-			text.Name = "CustomText"
-			text.Size = UDim2.fromScale(1, 1)
-			text.BackgroundTransparency = 1
-			text.TextColor3 = Color3.new(1, 1, 1)
-			text.Font = Enum.Font.GothamBold
-			text.TextSize = BUTTON_TEXT_SIZE
-			text.TextTransparency = BUTTON_TEXT_TRANSPARENCY
-			text.Text = BUTTON_TITLE
-			
-			currentIcon = icon
-			currentText = text
-			
-			text.Parent = icon
-			icon.Parent = button
-		else
-			CAS:SetTitle(ACTION_NAME, BUTTON_TITLE)
-		end
-	end
-	
-	hum.Died:Connect(function()
-		stopSprinting()
-	end)
+function Sprinting:Init()
+    self.Player = Players.LocalPlayer
+    self.Camera = workspace.CurrentCamera
+    
+    self.CurrentIcon = nil 
+    self.CurrentText = nil
+    self.IsMobile = false
+    self.IsSprinting = false
+    
+    task.spawn(function()
+        local forceRenderGui = Instance.new("ScreenGui")
+        forceRenderGui.Name = "ForceRenderContainer"
+        forceRenderGui.DisplayOrder = -1000
+        forceRenderGui.Parent = self.Player:WaitForChild("PlayerGui")
+        
+        local imagesToPreloadIds = { BUTTON_IMAGE, BUTTON_PRESSED_IMAGE }
+        
+        for _, id in ipairs(imagesToPreloadIds) do
+            if type(id) ~= "string" then continue end
+            local clone = Instance.new("ImageLabel")
+            clone.Image = id
+            clone.Size = UDim2.new(0, 1, 0, 1)
+            clone.ImageTransparency = 0.99
+            clone.Parent = forceRenderGui
+        end
+        
+        ContentProvider:PreloadAsync(forceRenderGui:GetChildren())
+        task.wait(0.5)
+        forceRenderGui:Destroy()
+    end)
+end
+
+function Sprinting:Start()
+    CAS:BindAction(
+        ACTION_NAME,
+        handleSprintAction,
+        true,
+        Enum.KeyCode.LeftShift,
+        Enum.KeyCode.ButtonL3
+    )
+    
+    local button = CAS:GetButton(ACTION_NAME)
+    if button and BUTTON_IMAGE then      
+        self.IsMobile = true
+        
+        local playerGui = self.Player:WaitForChild("PlayerGui")
+        local touchGui = playerGui:WaitForChild("TouchGui", 5)
+        if touchGui then
+            local controlFrame = touchGui:WaitForChild("TouchControlFrame", 5)
+            local jumpButton = controlFrame and controlFrame:FindFirstChild("JumpButton")
+            if jumpButton then
+                button.Size = jumpButton.Size
+                button.Position = UDim2.new(
+                    jumpButton.Position.X.Scale, jumpButton.Position.X.Offset,
+                    jumpButton.Position.Y.Scale, jumpButton.Position.Y.Offset - (jumpButton.Size.Y.Offset * 1.1)
+                )
+            end
+        end
+        
+        button.ImageTransparency = 1 
+        button.BackgroundTransparency = 1
+        
+        local icon = Instance.new("ImageLabel")
+        icon.Name = "CustomIcon"
+        icon.Size = UDim2.fromScale(1, 1)
+        icon.BackgroundTransparency = 1
+        icon.Image = BUTTON_IMAGE 
+        
+        local text = Instance.new("TextLabel")
+        text.Name = "CustomText"
+        text.Size = UDim2.fromScale(1, 1)
+        text.BackgroundTransparency = 1
+        text.TextColor3 = Color3.new(1, 1, 1)
+        text.Font = Enum.Font.GothamBold
+        text.TextSize = BUTTON_TEXT_SIZE
+        text.TextTransparency = BUTTON_TEXT_TRANSPARENCY
+        text.Text = BUTTON_TITLE
+        
+        self.CurrentIcon = icon
+        self.CurrentText = text
+        
+        text.Parent = icon
+        icon.Parent = button
+    elseif button then
+        CAS:SetTitle(ACTION_NAME, BUTTON_TITLE)
+    end
 end
 
 return Sprinting

@@ -1,7 +1,10 @@
 local UserInputService = game:GetService("UserInputService")
+local CollectionService = game:GetService("CollectionService")
 
 local Hotbar = require(script.Hotbar)
 local Inventory = require(script.Inventory)
+local SellingMenu = require(script.SellingMenu)
+local Notifications = require(script.Notifications)
 
 local UIController = {}
 
@@ -9,13 +12,17 @@ function UIController:Init()
     game.StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Backpack, false)
     Hotbar:Init()
     Inventory:Init()
+    SellingMenu:Init()
+    Notifications:Init()
 
-    self.ActiveFrame = nil
+    self.ActiveWindow = nil
 end
 
 function UIController:Start()
     Hotbar:Start()
     Inventory:Start()
+    SellingMenu:Start()
+    Notifications:Start()
 
     UserInputService.InputBegan:Connect(function(input, gp)
         if gp then return end
@@ -41,6 +48,27 @@ function UIController:Start()
     Hotbar.InventoryToggleRequested.Event:Connect(function()
         self:ToggleWindow("Inventory") 
     end)
+
+    SellingMenu.CloseRequested.Event:Connect(function()
+        self:ToggleWindow("SellingMenu") 
+    end)
+
+
+    local function setupSellingPrompt(prompt)
+        if not prompt:IsA("ProximityPrompt") then return end
+        
+        prompt.Triggered:Connect(function()
+            self:ToggleWindow("SellingMenu")
+        end)
+    end
+
+    CollectionService:GetInstanceAddedSignal("SellingMenu"):Connect(function(obj)
+        setupSellingPrompt(obj)
+    end)
+
+    for _, obj in ipairs(CollectionService:GetTagged("SellingMenu")) do
+        setupSellingPrompt(obj)
+    end
 end
 
 function UIController:ToggleWindow(windowName: string)
@@ -49,6 +77,8 @@ function UIController:ToggleWindow(windowName: string)
           Inventory:SetVisible(false)
         elseif windowName == "Hotbar" then
             Hotbar:ToggleHotbarInventoryFrame(false)
+        elseif windowName == "SellingMenu" then
+            SellingMenu:SetVisible(false)
         end
         self.ActiveWindow = nil
         
@@ -57,12 +87,16 @@ function UIController:ToggleWindow(windowName: string)
             Inventory:SetVisible(false)
         elseif self.ActiveWindow == "Hotbar" then
             Hotbar:ToggleHotbarInventoryFrame(false)
+        elseif self.ActiveWindow == "SellingMenu" then
+            SellingMenu:SetVisible(false)
         end
 
         if windowName == "Inventory" then
             Inventory:SetVisible(true)
         elseif windowName == "Hotbar" then
             Hotbar:ToggleHotbarInventoryFrame(true)
+        elseif windowName == "SellingMenu" then
+            SellingMenu:SetVisible(true)
         end
         self.ActiveWindow = windowName
     end

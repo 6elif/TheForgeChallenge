@@ -8,20 +8,22 @@ local MovementController = {}
 
 function MovementController:Init()
     self.Player = Players.LocalPlayer
+    Sprinting:Init()
+    ShiftLock:Init()
 end
 
 function MovementController:OnCharacterAdded(character: Model)
     local humanoid = character:WaitForChild("Humanoid")
     local animator = humanoid:WaitForChild("Animator")
     
-    AnimationManager.Init(animator)
-    AnimationManager.StartAnims(humanoid)
+    AnimationManager:Init(animator)
+    AnimationManager:StartAnims(humanoid)
 
-    ShiftLock.Start()
+    Sprinting:OnCharacterSpawn(character)
 end
 
 function MovementController:Start()
-   self.Player.CharacterAdded:Connect(function(character)
+    self.Player.CharacterAdded:Connect(function(character)
         self:OnCharacterAdded(character)
     end)
     
@@ -31,8 +33,8 @@ function MovementController:Start()
         end)
     end
     
-    Sprinting.Start()
-    ShiftLock.Start()
+    Sprinting:Start()
+    ShiftLock:Start()
 end
 
 return MovementController
