@@ -5,9 +5,12 @@ sourcemap.json
 aftman.lock
 sourcemap.json
 settings.json
+aftman.toml
+.gitignore
 
 # Dependencies
 node_modules/
+.vsode/
 
 # Roblox Files
 *.rbxl

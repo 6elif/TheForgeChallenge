@@ -5,6 +5,7 @@ local Hotbar = require(script.Hotbar)
 local Inventory = require(script.Inventory)
 local SellingMenu = require(script.SellingMenu)
 local Notifications = require(script.Notifications)
+local Forge = require(script.Forge)
 
 local UIController = {}
 
@@ -14,6 +15,7 @@ function UIController:Init()
     Inventory:Init()
     SellingMenu:Init()
     Notifications:Init()
+    Forge:Init()
 
     self.ActiveWindow = nil
 end
@@ -53,6 +55,9 @@ function UIController:Start()
         self:ToggleWindow("SellingMenu") 
     end)
 
+    Forge.ForgeToggleRequested.Event:Connect(function()
+        self:ToggleWindow("Forge")
+    end)
 
     local function setupSellingPrompt(prompt)
         if not prompt:IsA("ProximityPrompt") then return end
@@ -62,12 +67,20 @@ function UIController:Start()
         end)
     end
 
+    CollectionService:GetInstanceAddedSignal("ForgeModel"):Connect(function(model)
+        Forge:Start(model)
+    end)
+
     CollectionService:GetInstanceAddedSignal("SellingMenu"):Connect(function(obj)
         setupSellingPrompt(obj)
     end)
 
     for _, obj in ipairs(CollectionService:GetTagged("SellingMenu")) do
         setupSellingPrompt(obj)
+    end
+
+    for _, model in ipairs(CollectionService:GetTagged("ForgeModel")) do
+        Forge:Start(model)
     end
 end
 
@@ -79,7 +92,10 @@ function UIController:ToggleWindow(windowName: string)
             Hotbar:ToggleHotbarInventoryFrame(false)
         elseif windowName == "SellingMenu" then
             SellingMenu:SetVisible(false)
+        elseif windowName == "Forge" then
+            Forge:CloseForgeGui()
         end
+
         self.ActiveWindow = nil
         
     else
@@ -89,16 +105,21 @@ function UIController:ToggleWindow(windowName: string)
             Hotbar:ToggleHotbarInventoryFrame(false)
         elseif self.ActiveWindow == "SellingMenu" then
             SellingMenu:SetVisible(false)
+        elseif self.ActiveWindow == "Forge" then
+            Forge:CloseForgeGui()
         end
 
+        self.ActiveWindow = windowName
+        
         if windowName == "Inventory" then
             Inventory:SetVisible(true)
         elseif windowName == "Hotbar" then
             Hotbar:ToggleHotbarInventoryFrame(true)
         elseif windowName == "SellingMenu" then
             SellingMenu:SetVisible(true)
+        elseif windowName == "Forge" then
+            Forge:OpenForgeGui()
         end
-        self.ActiveWindow = windowName
     end
 end
 

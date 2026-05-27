@@ -1,17 +1,6 @@
 local TweenService = game:GetService("TweenService")
 
-local playerGui = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
-local forgeGui = playerGui.ForgeGui
-local counterFrame = forgeGui.CounterFrame
-
-local counterManager = {}
-
-local textLabels = {
-	["1"] = counterFrame.Three,
-	["2"] = counterFrame.Two,
-	["3"] = counterFrame.One,
-	["4"] = counterFrame.Go,
-}
+local CounterManager = {}
 
 local START_SIZE = UDim2.fromScale(0.166, 0.176)
 local DEFAULT_SIZE = UDim2.fromScale(0.138, 0.131)
@@ -23,15 +12,28 @@ local lastIncreasSizeInfo = TweenInfo.new(1.5, Enum.EasingStyle.Quad, Enum.Easin
 local fadeOutInfo = TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
 local transparencyInfo = TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
 
-function counterManager:StartCount()
+function CounterManager:Init()
+	local playerGui = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
+	local forgeGui = playerGui.ForgeGui
+
+	self.CounterFrame = forgeGui.CounterFrame
+	self.TextLabels = {
+		["1"] = self.CounterFrame.Three,
+		["2"] = self.CounterFrame.Two,
+		["3"] = self.CounterFrame.One,
+		["4"] = self.CounterFrame.Go,
+	}
+end
+
+function CounterManager:StartCount()
 	for i = 1, 4 do
-		local label = textLabels[tostring(i)]
+		local label = self.TextLabels[tostring(i)]
 		
-		counterFrame.GroupTransparency = 1
+		self.CounterFrame.GroupTransparency = 1
 		label.Size = START_SIZE
 		label.Visible = true
 		
-		local transparencyTween = TweenService:Create(counterFrame, transparencyInfo, {GroupTransparency = 0})
+		local transparencyTween = TweenService:Create(self.CounterFrame, transparencyInfo, {GroupTransparency = 0})
 		transparencyTween:Play()
 		
 		local popTween = TweenService:Create(label, popInfo, {Size = DEFAULT_SIZE})
@@ -46,7 +48,7 @@ function counterManager:StartCount()
 			
 			task.spawn(function()
 				task.wait(1)
-				local fadeOutTween = TweenService:Create(counterFrame, fadeOutInfo , {GroupTransparency = 1})
+				local fadeOutTween = TweenService:Create(self.CounterFrame, fadeOutInfo , {GroupTransparency = 1})
 				fadeOutTween:Play()
 
 				fadeOutTween.Completed:Wait()
@@ -64,7 +66,7 @@ function counterManager:StartCount()
 		
 		task.wait(0.4)
 		
-		local fadeOutTween = TweenService:Create(counterFrame, fadeOutInfo , {GroupTransparency = 1})
+		local fadeOutTween = TweenService:Create(self.CounterFrame, fadeOutInfo , {GroupTransparency = 1})
 		fadeOutTween:Play()
 		
 		fadeOutTween.Completed:Wait()
@@ -74,4 +76,4 @@ function counterManager:StartCount()
 	end
 end
 
-return counterManager
+return CounterManager
