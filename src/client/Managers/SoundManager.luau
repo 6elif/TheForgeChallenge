@@ -9,7 +9,7 @@ SoundManager.Settings = {
 	Ambience = 0.5
 }
 
-function SoundManager.PlaySound(data)
+function SoundManager:PlaySound(data)
 	local soundName = data.soundName
 	local category = data.category
 	local position = data.position
@@ -24,8 +24,8 @@ function SoundManager.PlaySound(data)
 	local sound = soundTemplate:Clone()
 	sound.Parent = workspace
 
-	local categoryVolume = SoundManager.Settings[category] or 0.5
-	local masterVolume = SoundManager.Settings.Master
+	local categoryVolume = self.Settings[category] or 0.5
+	local masterVolume = self.Settings.Master
 	sound.Volume = soundTemplate.Volume * categoryVolume * masterVolume
 
 	if position then
@@ -55,8 +55,8 @@ function SoundManager.PlaySound(data)
 	return sound
 end
 
-function SoundManager.SetVolume(category, volume)
-	SoundManager.Settings[category] = math.clamp(volume, 0, 1)
+function SoundManager:SetVolume(category, volume)
+	self.Settings[category] = math.clamp(volume, 0, 1)
 end
 
 return SoundManager

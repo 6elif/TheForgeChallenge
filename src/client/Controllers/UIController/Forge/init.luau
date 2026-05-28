@@ -65,23 +65,23 @@ function Forge:Init()
 
     self.Player = game:GetService("Players").LocalPlayer
     self.PlayerGui = self.Player:WaitForChild("PlayerGui")
-    self.ForgeGui = self.PlayerGui.ForgeGui
-    self.MainFrame = self.ForgeGui.MainFrame
-    self.SelectFrame = self.MainFrame.SelectFrame
-    self.SelectScroll = self.SelectFrame.ScrollingFrame
-    self.CloseButton = self.SelectFrame.Title.Close
-    self.WeaponButton = self.SelectFrame.Weapon
-    self.ArmorButton = self.SelectFrame.Armor
+    self.ForgeGui = self.PlayerGui:WaitForChild("ForgeGui")
+    self.MainFrame = self.ForgeGui:WaitForChild("MainFrame")
+    self.SelectFrame = self.MainFrame:WaitForChild("SelectFrame")
+    self.SelectScroll = self.SelectFrame:WaitForChild("ScrollingFrame")
+    self.CloseButton = self.SelectFrame:WaitForChild("Title"):WaitForChild("Close")
+    self.WeaponButton = self.SelectFrame:WaitForChild("Weapon")
+    self.ArmorButton = self.SelectFrame:WaitForChild("Armor")
 
-    self.ForgeButtonFrame = self.MainFrame.ForgeButtonFrame
-    self.SlotFrame = self.ForgeButtonFrame.SlotFrame
-    self.MultiplierTextLabel = self.ForgeButtonFrame.MultiplierFrame.TextCanvas.TextLabel
+    self.ForgeButtonFrame = self.MainFrame:WaitForChild("ForgeButtonFrame")
+    self.SlotFrame = self.ForgeButtonFrame:WaitForChild("SlotFrame")
+    self.MultiplierTextLabel = self.ForgeButtonFrame:WaitForChild("MultiplierFrame"):WaitForChild("TextCanvas"):WaitForChild("TextLabel")
 
-    self.ForgeButton = self.ForgeButtonFrame.ForgeButton
+    self.ForgeButton = self.ForgeButtonFrame:WaitForChild("ForgeButton")
 
-    self.ChancesFrame = self.MainFrame.ChanceFrame
-    self.WeaponScroll = self.ChancesFrame.WeaponScroll
-    self.ArmorScroll = self.ChancesFrame.ArmorScroll
+    self.ChancesFrame = self.MainFrame:WaitForChild("ChanceFrame")
+    self.WeaponScroll = self.ChancesFrame:WaitForChild("WeaponScroll")
+    self.ArmorScroll = self.ChancesFrame:WaitForChild("ArmorScroll")
 
     self.TotalAmountOfOres = 0
 

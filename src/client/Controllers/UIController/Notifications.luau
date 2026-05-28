@@ -4,11 +4,11 @@ local Players = game:GetService("Players")
 
 local events = RepStorage.Assets.Network.Events
 local collectedEvent = events.OreCollected
-local hitEvent = events.Hit
+local hitEvent = events.PickaxeHit
 local notificationEvent = events.Notification
 
-local oreDataModule = require(RepStorage.Shared.Data.OreData)
-local soundManager = require(script.Parent.Parent.Parent.Managers.SoundManager)
+local OreDataModule = require(RepStorage.Shared.Data.OreData)
+local SoundManager = require(script.Parent.Parent.Parent.Managers.SoundManager)
 local oreFolder = RepStorage.Assets.Models.Ores
 
 local Notifications = {}
@@ -107,7 +107,7 @@ function Notifications:PlayFlashEffect(finalHit, oresDropped)
         local highestRarity = "Common"
 
         for _, oreName in pairs(oresDropped) do
-            local oreData, _ = oreDataModule.GetOreData(oreName)
+            local oreData, _ = OreDataModule.GetOreData(oreName)
             
             if oreData.Rarity == "Epic" then
                 highestRarity = "Epic"
@@ -118,7 +118,7 @@ function Notifications:PlayFlashEffect(finalHit, oresDropped)
             end
         end
 
-        local rarityColor = oreDataModule.RarityColors[highestRarity]
+        local rarityColor = OreDataModule.RarityColors[highestRarity]
         self.FlashEffect.Flash1.UIGradient.Color = ColorSequence.new(rarityColor)
         self.FlashEffect.Flash2.UIGradient.Color = ColorSequence.new(rarityColor) 
     end
@@ -150,11 +150,11 @@ function Notifications:PlayFlashEffect(finalHit, oresDropped)
 end
 
 function Notifications:ShowOreDrop(oreName)
-    local oreData, color = oreDataModule.GetOreData(oreName)
+    local oreData, color = OreDataModule.GetOreData(oreName)
     
     if not color or not oreData then return end
     
-    soundManager.PlaySound({soundName = "OreCollected", category = "SFX"})
+    SoundManager:PlaySound({soundName = "OreCollected", category = "SFX"})
     
     local r = math.floor(color.R * 255)
     local g = math.floor(color.G * 255)

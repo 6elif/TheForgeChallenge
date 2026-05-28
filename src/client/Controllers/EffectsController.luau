@@ -174,7 +174,7 @@ local playEffect = {
 	end,
 
 	["PlaySound"] = function(data)
-		SoundManager.PlaySound(data)
+		SoundManager:PlaySound(data)
 	end,
 }
 

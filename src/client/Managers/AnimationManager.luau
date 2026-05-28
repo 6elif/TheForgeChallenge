@@ -3,6 +3,8 @@ local RunService = game:GetService("RunService")
 
 local AnimationManager = {}
 
+AnimationManager.IsPickaxeEquipped = false
+
 local function loadAnims(animator, animsToLoad, tableToPlaceThemIn)
     for name, anim in pairs(animsToLoad) do
         local track = animator:LoadAnimation(anim)
@@ -32,7 +34,6 @@ function AnimationManager:Init(animator: Animator)
 
     self.LoadedPickaxeAnims = {}
     self.LoadedRegularAnims = {}
-    self.IsPickaxeEquipped = false
 
     local regularAnimsFolder = ReplicatedStorage.Assets.Animations.RegularAnims
     local pickaxeAnimsFolder = ReplicatedStorage.Assets.Animations.PickaxeAnims
